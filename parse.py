@@ -1,4 +1,4 @@
-from lark import Lark, Transformer, Token, v_args 
+from lark import Lark, Token, Transformer, Tree, v_args
 
 from grammar import GRAMMAR
 
@@ -19,11 +19,13 @@ class CalculateTree(Transformer):
    def assign_to_var(self, value, name):
       return self.assign_var(name, value)
 
-   def call(self, name, tuple):
+   def call(self, name, tuple, *codes):
       try:
          result = self.functions[name]
          for index in range(len(tuple)):
             result = result.replace(f"a{index}", repr(tuple[index]))
+         for index in range(len(codes)):
+            result = result.replace(f"e{index}", codes[index])
          return parse(result)
       except KeyError:
          return print("Callable not found: %s" % name)
@@ -39,7 +41,9 @@ class CalculateTree(Transformer):
       if len(expressions) > 1:
          expression_args = expressions[:-1]
          for arg in expression_args:
-            expression_args_list.append(arg.value)
+            arg: Tree = arg
+            token: Token = arg.children[0]
+            expression_args_list.append(token.value)
       return (args_list, expression_args_list, expression)
 
    def codeblock(self, *code):

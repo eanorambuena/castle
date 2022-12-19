@@ -17,7 +17,7 @@ GRAMMAR = r"""
    ?destructuring: "..." NAME
 
    ?use: (NAME ".")+ NAME
-   ?call: (NAME ".")* NAME tuple -> call
+   ?call: (NAME ".")* NAME tuple codeblock* -> call
 
    ?codeblock: "{" /[^{^}]+/? codeblock* /[^{^}]+/? "}" -> codeblock
    ?children_block: "{" NAME "}" -> chlidren_block
